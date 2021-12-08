@@ -1,8 +1,6 @@
-import copy
-from typing import List
-from typing import Set
-from typing import Tuple
-from typing import Optional
+import copy  # in the forom they agreed to import copy
+from typing import List, Tuple, Set, Optional
+
 
 # part 1
 
@@ -212,7 +210,7 @@ def solve_puzzle_helper(board: List[List[int]], constraints_set: Set[Tuple[int, 
         return None
     else:
         next_step_ = next_step(board)
-        if not next_step_: #count
+        if not next_step_:  # count
             return board
         else:
             row_i, column_j = next_step_
@@ -238,6 +236,7 @@ def solve_puzzle(constraints_set: Set[Tuple[int, int, int]], n: int, m: int) -> 
     reset_board = board_start(n, m)
     return solve_puzzle_helper(reset_board, constraints_set)
 
+
 def solve_puzzle_helper2(board: List[List[int]], constraints_set: Set[Tuple[int, int, int]]) -> Optional[
     List[List[int]]]:
     """
@@ -248,7 +247,7 @@ def solve_puzzle_helper2(board: List[List[int]], constraints_set: Set[Tuple[int,
         return 0
     else:
         next_step_ = next_step(board)
-        if not next_step_: #count
+        if not next_step_:  # count
             return 1
         else:
             row_i, column_j = next_step_
@@ -274,9 +273,54 @@ def how_many_solutions(constraints_set: Set[Tuple[int, int, int]], n: int, m: in
     return solve_puzzle_helper2(reset_board, constraints_set)
 
 
-
-
-
+# def next_index(row: int,col: int, pic: List[List[int]]) -> Tuple[int, int]:
+#     """
+#     :return: the next cell inb the picture
+#     """
+#     row_len = len(pic) -1 #for pic of 4 row will return 3
+#     col_len = len(pic[0]) -1
+#     new_row, new_col = (-1,-1)
+#     if row == row_len and col == col_len:
+#         new_row, new_col = (0,0)
+#     elif row == row_len and col < col_len:
+#         new_row, new_col = (row, col +1)
+#     elif row < row_len and col == col_len:
+#         new_row, new_col = (row + 1, 0)
+#     elif row < row_len and col < col_len:
+#         new_row, new_col = (row, col+1)
+#     return new_row, new_col
+#
+#
+#
+#
+# def generate_helper(picture: List[List[int]], row: int, col: int, const_set: Set) -> int:
+#     if how_many_solutions(const_set, len(picture), len(picture[0])) == 0:
+#         return len(picture)  # just False parapeter
+#     if how_many_solutions(const_set, len(picture), len(picture[0])) == 1:
+#         return size(const_set)
+#     if not solve_puzzle(const_set, len(picture), len(picture[0])):
+#         return size(const_set)
+#     else:
+#         next_row, next_col = next_index(row,col, picture)
+#         constrain = (next_row, next_col, min_seen_cells(picture, next_row, next_col))
+#         const_sum_with_change = generate_helper(picture, next_row, next_col, const_set.add(constrain))
+#         const_sum_no_change = generate_helper(picture, next_row, next_col, const_set)
+#         # print('const_sum_with_change', const_sum_with_change)
+#         return min(const_sum_no_change, const_sum_with_change)
+#
+#
+#
+# def generate_puzzle(picture: List[List[int]]) -> Set[Tuple[int, int, int]]:
+#     """
+#     Given a picture we will look for a game board
+#     that this image is his only solution
+#     :param picture: A two-dimensional picture list that represents an image.
+#     :return: A set of constraints that meets the conditions defined above.
+#     """
+#     const = (0, 0, min_seen_cells(picture, 0, 0))
+#     consterin_set = set()
+#     consterin_set.add(const)
+#     return generate_helper(picture, 0, 0, consterin_set)
 
 # tests
 ## part 1
@@ -298,12 +342,20 @@ def how_many_solutions(constraints_set: Set[Tuple[int, int, int]], n: int, m: in
 ##assert check_constraints(pic, {(0, 3, 3)}) == 0
 
 ##part 3
-assert solve_puzzle({(0, 3, 3), (1, 2, 5), (2, 0, 1), (0, 0, 0)}, 3, 4) == [[0, 0, 1, 1], [0, 1, 1, 1], [1, 0, 1, 0]]
-assert solve_puzzle({(0, 3, 3), (1, 2, 5), (2, 0, 1), (2, 3, 5)}, 3, 4)  == None
-assert solve_puzzle({(0, 2, 3), (1, 1, 4), (2, 2, 5)}, 3, 3) == [[0, 0, 1], [1, 1, 1], [1, 1, 1]]
+# assert solve_puzzle({(0, 3, 3), (1, 2, 5), (2, 0, 1), (0, 0, 0)}, 3, 4) == [[0, 0, 1, 1], [0, 1, 1, 1], [1, 0, 1, 0]]
+# assert solve_puzzle({(0, 3, 3), (1, 2, 5), (2, 0, 1), (2, 3, 5)}, 3, 4) == None
+# assert solve_puzzle({(0, 2, 3), (1, 1, 4), (2, 2, 5)}, 3, 3) == [[0, 0, 1], [1, 1, 1], [1, 1, 1]]
+#
+# ## part 4
+# assert how_many_solutions({(0, 3, 3), (1, 2, 5), (2, 0, 1), (2, 3, 5)}, 3, 4) == 0
+# assert how_many_solutions({(0, 3, 3), (1, 2, 5), (2, 0, 1), (0, 0, 1)}, 3, 4) == 1
+# assert how_many_solutions({(0, 2, 3), (1, 1, 4), (2, 2, 5)}, 3, 3) == 2
+# assert how_many_solutions({(i, j, 0) for i in range(3) for j in range(3)}, 3, 3) == 1
+# assert how_many_solutions(set(), 2, 2) == 16
+# assert how_many_solutions({(0, 3, 3), (2, 0, 1)}, 3, 4) == 64
 
 
-## part 4
-assert how_many_solutions({(0, 3, 3), (1, 2, 5), (2, 0, 1), (2, 3, 5)}, 3, 4) == 0
-assert how_many_solutions({(0, 3, 3), (1, 2, 5), (2, 0, 1), (0, 0, 1)}, 3, 4) == 1
-assert how_many_solutions({(0, 2, 3), (1, 1, 4), (2, 2, 5)}, 3, 3) == 2
+
+### part 5
+# picture = [[1, 0, 0], [1, 1, 1]]
+# generate_puzzle(picture)
