@@ -4,7 +4,6 @@ from typing import Set
 from typing import Tuple
 from typing import Optional
 
-#dcsajdfhckjash
 # part 1
 
 def _black_white_max_seen_helper(picture: List[List[int]], color: str) -> List[List[int]]:
@@ -119,8 +118,8 @@ def max_seen_cells(picture: List[List[int]], row: int, col: int) -> int:
     else:
         count_to_right = _rightovers_raw_max_seen(pic[row][col:])
         count_to_left = _leftovers_raw_max_seen(pic[row][col::-1])
-        count_down = _count_down(picture, row, col)
-        count_up = _count_up(picture, row, col)
+        count_down = _count_down(pic, row, col)
+        count_up = _count_up(pic, row, col)
         tot_count = count_to_right + count_to_left + count_up + count_down
         return tot_count
 
@@ -141,8 +140,8 @@ def min_seen_cells(picture: List[List[int]], row: int, col: int) -> int:
     else:
         count_to_right = _rightovers_raw_max_seen(black_pic[row][col:])
         count_to_left = _leftovers_raw_max_seen(black_pic[row][col::-1])
-        count_down = _leftovers_up_max_seen(black_pic[row + 1:], col)
-        count_up = _leftovers_up_max_seen(black_pic[row - 1:-1:-1], col)
+        count_down = _count_down(black_pic, row, col)
+        count_up = _count_up(black_pic, row, col)
         tot_count = count_to_right + count_to_left + count_up + count_down
         return tot_count
 
@@ -210,21 +209,20 @@ def solve_puzzle_helper(board: List[List[int]], constraints_set: Set[Tuple[int, 
     backtracking function that fill the board in the correct place
     """
     if check_constraints(board, constraints_set) == 0:
-        print('the constraints didnt fufil')
-        return
+        return None
     else:
-        if not next_step(board):
+        next_step_ = next_step(board)
+        if not next_step_: #count
             return board
         else:
-            row_i, column_j = next_step(board)
+            row_i, column_j = next_step_
             board[row_i][column_j] = 0
-            print(board)
-            solve_puzzle_helper(board, constraints_set)
-            print(board)
+            if solve_puzzle_helper(board, constraints_set) is not None:
+                return board
             board[row_i][column_j] = 1
-            print(board)
-            solve_puzzle_helper(board, constraints_set)
-            print(board)
+            if solve_puzzle_helper(board, constraints_set) is not None:
+                return board
+            board[row_i][column_j] = -1
             return
 
 
@@ -239,6 +237,45 @@ def solve_puzzle(constraints_set: Set[Tuple[int, int, int]], n: int, m: int) -> 
     """
     reset_board = board_start(n, m)
     return solve_puzzle_helper(reset_board, constraints_set)
+
+def solve_puzzle_helper2(board: List[List[int]], constraints_set: Set[Tuple[int, int, int]]) -> Optional[
+    List[List[int]]]:
+    """
+    backtracking function that fill the board in the correct place
+    """
+    counter = 0
+    if check_constraints(board, constraints_set) == 0:
+        return 0
+    else:
+        next_step_ = next_step(board)
+        if not next_step_: #count
+            return 1
+        else:
+            row_i, column_j = next_step_
+            board[row_i][column_j] = 0
+            counter += solve_puzzle_helper2(board, constraints_set)
+
+            board[row_i][column_j] = 1
+            counter += solve_puzzle_helper2(board, constraints_set)
+            board[row_i][column_j] = -1
+            return counter
+
+
+def how_many_solutions(constraints_set: Set[Tuple[int, int, int]], n: int, m: int) -> int:
+    """
+    A function that accepts a set of constraints and a board plays, and returns the number of solution
+     of the board, if any.
+    :param constraints_set: group constraints
+    :param n: number of rows
+    :param m: number of columns
+    :return: int
+    """
+    reset_board = board_start(n, m)
+    return solve_puzzle_helper2(reset_board, constraints_set)
+
+
+
+
 
 
 # tests
@@ -261,8 +298,12 @@ def solve_puzzle(constraints_set: Set[Tuple[int, int, int]], n: int, m: int) -> 
 ##assert check_constraints(pic, {(0, 3, 3)}) == 0
 
 ##part 3
-####assert solve_puzzle({(0, 3, 3), (1, 2, 5), (2, 0, 1), (0, 0, 0)}, 3, 4) == [[0, 0, 1, 1], [0, 1, 1, 1], [1, 0, 1, 0]]
-# assert solve_puzzle({(0, 3, 3), (1, 2, 5), (2, 0, 1), (2, 3, 5)}, 3, 4)  == None
-# assert solve_puzzle({(0, 2, 3), (1, 1, 4), (2, 2, 5)}, 3, 3) == [[0, 0, 1], [1, 1, 1], [1, 1, 1]]
-# assert solve_puzzle({(0, 2, 3), (1, 1, 4), (2, 2, 5)}, 3, 3) == [[1, 0, 1], [1, 1, 1], [1, 1, 1]]
+assert solve_puzzle({(0, 3, 3), (1, 2, 5), (2, 0, 1), (0, 0, 0)}, 3, 4) == [[0, 0, 1, 1], [0, 1, 1, 1], [1, 0, 1, 0]]
+assert solve_puzzle({(0, 3, 3), (1, 2, 5), (2, 0, 1), (2, 3, 5)}, 3, 4)  == None
+assert solve_puzzle({(0, 2, 3), (1, 1, 4), (2, 2, 5)}, 3, 3) == [[0, 0, 1], [1, 1, 1], [1, 1, 1]]
 
+
+## part 4
+assert how_many_solutions({(0, 3, 3), (1, 2, 5), (2, 0, 1), (2, 3, 5)}, 3, 4) == 0
+assert how_many_solutions({(0, 3, 3), (1, 2, 5), (2, 0, 1), (0, 0, 1)}, 3, 4) == 1
+assert how_many_solutions({(0, 2, 3), (1, 1, 4), (2, 2, 5)}, 3, 3) == 2
